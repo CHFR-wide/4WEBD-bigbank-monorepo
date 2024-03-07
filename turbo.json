@@ -5,11 +5,14 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "outputs": ["dist/**"]
     },
     "db:migrate:deploy": {},
+    "db:migrate:dev": {},
     "db:push": {},
     "db:seed": {},
+    "start:dev": {},
+    "stop": {},
     "dev": {
       "cache": false,
       "persistent": true

@@ -1,1 +1,1 @@
-module.exports = require("@repo/eslint-config/library");
+module.exports = require("@repo/eslint-config/eslintrc");

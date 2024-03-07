@@ -1,0 +1,15 @@
+FROM node:18-alpine
+
+WORKDIR /usr/src/app
+
+COPY ./package.json /usr/src/app
+COPY ./package-lock.json /usr/src/app
+COPY ./prisma /usr/src/app/prisma
+
+RUN npm i
+RUN npx prisma generate
+RUN npm prune --omit=dev
+
+COPY ./dist /usr/src/app/dist
+
+CMD [ "npm", "run", "start:prod" ]
