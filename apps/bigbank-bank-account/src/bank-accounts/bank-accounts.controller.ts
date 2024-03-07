@@ -1,6 +1,6 @@
 import { BadRequestException, Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { BankAccount } from '@prisma/client';
+import { BankAccount } from '@repo/database';
 import { BankAccountsService } from './bank-accounts.service';
 
 @Controller()
@@ -12,17 +12,17 @@ export class BankAccountsController {
   }
 
   @MessagePattern({ cmd: 'bankAccount-findAll' })
-  async findAllForUser(data: { userId: number }) {
+  async findAllForUser(data: { userId: number }): Promise<BankAccount[]> {
     return await this.bankAccountsService.findAllForUser(data);
   }
 
   @MessagePattern({ cmd: 'bankAccount-findOne' })
-  async findOne(data: { id: number }) {
+  async findOne(data: { id: number }): Promise<BankAccount> {
     return await this.bankAccountsService.findOne(data);
   }
 
   @MessagePattern({ cmd: 'bankAccount-withdraw' })
-  async withdraw(data: { id: number; amount: number }) {
+  async withdraw(data: { id: number; amount: number }): Promise<BankAccount> {
     const canWithdraw = await this.bankAccountsService.canWithdraw(data);
 
     if (!canWithdraw) {
@@ -33,17 +33,17 @@ export class BankAccountsController {
   }
 
   @MessagePattern({ cmd: 'bankAccount-deposit' })
-  async deposit(data: { id: number; userId: number; amount: number }) {
+  async deposit(data: { id: number; amount: number }): Promise<BankAccount> {
     return this.bankAccountsService.deposit(data);
   }
 
   @MessagePattern({ cmd: 'bankAccount-update' })
-  async update(data: { id: number; label: string }) {
+  async update(data: { id: number; label: string }): Promise<BankAccount> {
     return await this.bankAccountsService.update(data);
   }
 
   @MessagePattern({ cmd: 'bankAccount-delete' })
-  async remove(data: { id: number }) {
+  async remove(data: { id: number }): Promise<BankAccount> {
     return await this.bankAccountsService.remove(data);
   }
 }

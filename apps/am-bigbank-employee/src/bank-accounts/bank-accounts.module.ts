@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { PrismaService } from 'src/prisma.service';
 import { BankAccountsController } from './bank-accounts.controller';
 import { BankAccountsService } from './bank-accounts.service';
 
@@ -17,7 +16,7 @@ import { BankAccountsService } from './bank-accounts.service';
     ]),
   ],
   controllers: [BankAccountsController],
-  providers: [BankAccountsService, PrismaService],
+  providers: [BankAccountsService],
   exports: [BankAccountsService],
 })
 export class BankAccountsModule {}
