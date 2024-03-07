@@ -11,14 +11,14 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_DOCKERIZED_URL}
     volumes:
-      - ./apps/am-bigbank-customer/src:/usr/src/app/apps/am-bigbank-customer/src
+      - ./apps/am-bigbank-front-office/src:/usr/src/app/apps/am-bigbank-front-office/src
     networks:
       - net-am-bigbank
     ports:
       - 3000:3000
       - 9229:9229
-  am-bigbank-ms-notification:
-    container_name: am-bigbank-ms-notification
+  am-bigbank-notification:
+    container_name: am-bigbank-notification
     build:
       context: ./
       dockerfile: Dockerfile.ms-notify
@@ -27,11 +27,11 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_DOCKERIZED_URL}
     volumes:
-      - ./apps/bigbank-notification/src:/usr/src/app/apps/bigbank-notification/src
+      - ./apps/am-bigbank-notification/src:/usr/src/app/apps/am-bigbank-notification/src
     networks:
       - net-am-bigbank
-  am-bigbank-ms-bank-account:
-    container_name: am-bigbank-ms-bank-account
+  am-bigbank-bank-account:
+    container_name: am-bigbank-bank-account
     build:
       context: ./
       dockerfile: Dockerfile.ms-bank-account
@@ -40,7 +40,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_DOCKERIZED_URL}
     volumes:
-      - ./apps/bigbank-bank-account/src:/usr/src/app/apps/bigbank-bank-account/src
+      - ./apps/am-bigbank-bank-account/src:/usr/src/app/apps/am-bigbank-bank-account/src
     networks:
       - net-am-bigbank
   am-bigbank-postgres:
