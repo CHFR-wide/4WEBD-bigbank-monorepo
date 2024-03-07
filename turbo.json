@@ -13,6 +13,7 @@
     "db:seed": {},
     "start:dev": {},
     "stop": {},
+    "clean": {},
     "dev": {
       "cache": false,
       "persistent": true

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
+import { BankAccount, Prisma } from '@repo/database';
+import { PrismaService } from 'src/db-access/prisma.service';
 
 @Injectable()
 export class BankAccountsService {
@@ -9,45 +9,45 @@ export class BankAccountsService {
    */
   constructor(private prismaService: PrismaService) {}
 
-  async create(data: { label: string; userId: number }) {
+  async create(data: { label: string; userId: number }): Promise<BankAccount> {
     return await this.prismaService.bankAccount.create({
       data: { ...data, balance: 0 },
     });
   }
 
-  async findAllForUser(data: { userId: number }) {
+  async findAllForUser(data: { userId: number }): Promise<BankAccount[]> {
     return await this.prismaService.bankAccount.findMany({
       where: data,
     });
   }
 
-  async findOne(data: { id: number }) {
+  async findOne(data: { id: number }): Promise<BankAccount> {
     return await this.prismaService.bankAccount.findUniqueOrThrow({
       where: data,
     });
   }
 
-  async update(data: { id: number; label: string }) {
+  async update(data: { id: number; label: string }): Promise<BankAccount> {
     return await this.prismaService.bankAccount.update({
       data: { label: data.label },
       where: { id: data.id },
     });
   }
 
-  async remove(data: { id: number }) {
+  async remove(data: { id: number }): Promise<BankAccount> {
     return await this.prismaService.bankAccount.delete({
       where: { id: data.id },
     });
   }
 
-  async deposit(data: { id: number; amount: number }) {
+  async deposit(data: { id: number; amount: number }): Promise<BankAccount> {
     return this.prismaService.bankAccount.update({
       where: { id: data.id },
       data: { balance: { increment: data.amount } },
     });
   }
 
-  async withdraw(data: { id: number; amount: number }) {
+  async withdraw(data: { id: number; amount: number }): Promise<BankAccount> {
     return this.prismaService.bankAccount.update({
       where: { id: data.id },
       data: { balance: { decrement: data.amount } },
