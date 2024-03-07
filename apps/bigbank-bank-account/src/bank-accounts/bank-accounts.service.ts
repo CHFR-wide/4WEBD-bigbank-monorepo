@@ -59,4 +59,12 @@ export class BankAccountsService {
 
     return bankAccount.balance >= new Prisma.Decimal(data.amount);
   }
+
+  async userOwnsAccount(data: { id: number; userId: number }) {
+    const bankAccount = await this.prismaService.bankAccount.findUnique({
+      where: data,
+    });
+
+    return bankAccount !== null;
+  }
 }

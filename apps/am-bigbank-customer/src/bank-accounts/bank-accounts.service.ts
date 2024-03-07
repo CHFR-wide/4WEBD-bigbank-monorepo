@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@repo/database';
 import { firstValueFrom } from 'rxjs';
-import { PrismaService } from 'src/prisma.service';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
 
@@ -11,10 +10,7 @@ export class BankAccountsService {
   /**
    *
    */
-  constructor(
-    private prismaService: PrismaService,
-    @Inject('BANKS_SERVICE') private banksClient: ClientProxy,
-  ) {}
+  constructor(@Inject('BANKS_SERVICE') private banksClient: ClientProxy) {}
   async create(userId: number, createBankAccountDto: CreateBankAccountDto) {
     const data = { label: createBankAccountDto.label, userId: userId };
 
@@ -24,51 +20,64 @@ export class BankAccountsService {
   }
 
   async findAllForUser(userId: number) {
-    return await this.prismaService.bankAccount.findMany({
-      where: { userId },
-    });
+    const data = { userId: userId };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-findAll' }, data),
+    );
   }
 
-  async findOne(id: number, userId: number) {
-    return await this.prismaService.bankAccount.findUniqueOrThrow({
-      where: { id, userId },
-    });
+  async findOne(id: number) {
+    const data = { id };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-findOne' }, data),
+    );
   }
 
-  async update(
-    id: number,
-    userId: number,
-    updateBankAccountDto: UpdateBankAccountDto,
-  ) {
-    return await this.prismaService.bankAccount.update({
-      data: updateBankAccountDto,
-      where: { id, userId },
-    });
+  async update(id: number, updateBankAccountDto: UpdateBankAccountDto) {
+    const data = { id, label: updateBankAccountDto.label };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-update' }, data),
+    );
   }
 
-  async remove(id: number, userId: number) {
-    return await this.prismaService.bankAccount.delete({
-      where: { id, userId },
-    });
+  async remove(id: number) {
+    const data = { id };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-delete' }, data),
+    );
   }
 
-  async deposit(id: number, userId: number, amount: number) {
-    return this.prismaService.bankAccount.update({
-      where: { id, userId },
-      data: { balance: { increment: amount } },
-    });
+  async deposit(id: number, amount: number) {
+    const data = { id, amount };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-deposit' }, data),
+    );
   }
 
-  async withdraw(id: number, userId: number, amount: number) {
-    return this.prismaService.bankAccount.update({
-      where: { id, userId },
-      data: { balance: { decrement: amount } },
-    });
+  async withdraw(id: number, amount: number) {
+    const data = { id, amount };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-withdraw' }, data),
+    );
   }
 
-  async canWithdraw(id: number, userId: number, amount: number) {
-    const bankAccount = await this.findOne(id, userId);
+  async canWithdraw(id: number, amount: number) {
+    const bankAccount = await this.findOne(id);
 
     return bankAccount.balance >= new Prisma.Decimal(amount);
+  }
+
+  async userOwnsAccount(id: number, userId: number) {
+    const data = { id, userId };
+
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-userOwnsAccount' }, data),
+    );
   }
 }

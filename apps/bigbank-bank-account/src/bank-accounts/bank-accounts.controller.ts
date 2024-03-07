@@ -46,4 +46,12 @@ export class BankAccountsController {
   async remove(data: { id: number }): Promise<BankAccount> {
     return await this.bankAccountsService.remove(data);
   }
+
+  @MessagePattern({ cmd: 'bankAccount-userOwnsAccount' })
+  async userOwnsAccount(data: {
+    id: number;
+    userId: number;
+  }): Promise<boolean> {
+    return await this.bankAccountsService.userOwnsAccount(data);
+  }
 }

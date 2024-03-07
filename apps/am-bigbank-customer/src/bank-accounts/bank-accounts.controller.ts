@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -35,7 +36,9 @@ export class BankAccountsController {
 
   @Get(':id')
   async findOne(@Param('id') id: string, @UserJwt() user: TUserJwt) {
-    return await this.bankAccountService.findOne(+id, user.sub);
+    await this.checkOwnership(+id, user.sub);
+
+    return await this.bankAccountService.findOne(+id);
   }
 
   @Post(':id/withdraw')
@@ -44,9 +47,10 @@ export class BankAccountsController {
     @Body() widthdrawDto: WithdrawDto,
     @UserJwt() user: TUserJwt,
   ) {
+    await this.checkOwnership(+id, user.sub);
+
     const canWithdraw = await this.bankAccountService.canWithdraw(
       +id,
-      user.sub,
       widthdrawDto.amount,
     );
 
@@ -54,7 +58,7 @@ export class BankAccountsController {
       throw new BadRequestException('Not enough funds');
     }
 
-    return this.bankAccountService.withdraw(+id, user.sub, widthdrawDto.amount);
+    return this.bankAccountService.withdraw(+id, widthdrawDto.amount);
   }
 
   @Post(':id/deposit')
@@ -63,7 +67,9 @@ export class BankAccountsController {
     @Body() depositDto: WithdrawDto,
     @UserJwt() user: TUserJwt,
   ) {
-    return this.bankAccountService.deposit(+id, user.sub, depositDto.amount);
+    await this.checkOwnership(+id, user.sub);
+
+    return this.bankAccountService.deposit(+id, depositDto.amount);
   }
 
   @Patch(':id')
@@ -72,15 +78,23 @@ export class BankAccountsController {
     @Body() updateBankAccountDto: UpdateBankAccountDto,
     @UserJwt() user: TUserJwt,
   ) {
-    return await this.bankAccountService.update(
-      +id,
-      user.sub,
-      updateBankAccountDto,
-    );
+    await this.checkOwnership(+id, user.sub);
+
+    return await this.bankAccountService.update(+id, updateBankAccountDto);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @UserJwt() user: TUserJwt) {
-    return await this.bankAccountService.remove(+id, user.sub);
+    await this.checkOwnership(+id, user.sub);
+
+    return await this.bankAccountService.remove(+id);
+  }
+
+  private async checkOwnership(id: number, userId: number) {
+    const userOwnsAccount = await this.bankAccountService.userOwnsAccount(
+      id,
+      userId,
+    );
+    if (!userOwnsAccount) throw new ForbiddenException();
   }
 }
