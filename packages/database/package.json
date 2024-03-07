@@ -7,9 +7,11 @@
   "types": "./dist/prismaClient.d.ts",
   "scripts": {
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "dev": "tsup prisma/prismaClient.ts --format esm,cjs --watch --dts",
+    "start:dev": "tsup prisma/prismaClient.ts --format esm,cjs --watch --dts",
+    "start:debug": "pnpm run start:dev",
     "lint": "TIMING=1 eslint src --fix",
-    "migrate:dev": "prisma migrate dev",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:seed": "ts-node prisma/seed.ts",
     "postinstall": "prisma generate",
     "test": "jest"
   },
@@ -17,8 +19,10 @@
     "@prisma/client": "^4.13.0"
   },
   "devDependencies": {
+    "@types/node": "^20.3.1",
     "jest": "^29.5.0",
     "prisma": "^4.13.0",
+    "ts-node": "^10.9.1",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   }

@@ -7,14 +7,15 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "db:migrate:deploy": {},
     "db:migrate:dev": {},
-    "db:push": {},
     "db:seed": {},
-    "start:dev": {},
     "stop": {},
     "clean": {},
-    "dev": {
+    "start:dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "start:debug": {
       "cache": false,
       "persistent": true
     },

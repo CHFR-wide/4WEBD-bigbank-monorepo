@@ -6,14 +6,12 @@
   },
   "scripts": {
     "build": "turbo run build",
-    "dev": "dotenv -- turbo run dev",
-    "db:migrate:deploy": "dotenv -- turbo run db:migrate:deploy",
     "db:migrate:dev": "dotenv -- turbo run db:migrate:dev",
-    "db:push": "dotenv -- turbo run db:push",
     "db:seed": "dotenv -- turbo run db:seed",
     "stop": "turbo run stop",
     "clean": "turbo run clean",
     "start:dev": "dotenv -- turbo run start:dev",
+    "start:debug": "dotenv -- turbo run start:debug",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "generate": "turbo run generate",
     "lint": "turbo run lint"

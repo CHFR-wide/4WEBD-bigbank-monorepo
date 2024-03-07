@@ -1,0 +1,20 @@
+FROM node:18
+
+RUN npm i -g pnpm
+RUN npm i -g turbo
+
+WORKDIR /usr/src/app
+
+RUN mkdir /apps
+
+COPY package.json .
+COPY turbo.json .
+COPY pnpm* .
+COPY packages packages
+
+COPY apps/bigbank-bank-account apps/bigbank-bank-account
+
+RUN pnpm i
+
+EXPOSE 3000
+CMD [ "pnpm", "start:debug" ]

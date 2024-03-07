@@ -11,6 +11,7 @@ export class BankAccountsService {
    *
    */
   constructor(@Inject('BANKS_SERVICE') private banksClient: ClientProxy) {}
+
   async create(userId: number, createBankAccountDto: CreateBankAccountDto) {
     const data = { label: createBankAccountDto.label, userId: userId };
 

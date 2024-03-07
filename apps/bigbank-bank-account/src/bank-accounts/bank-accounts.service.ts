@@ -62,9 +62,9 @@ export class BankAccountsService {
 
   async userOwnsAccount(data: { id: number; userId: number }) {
     const bankAccount = await this.prismaService.bankAccount.findUnique({
-      where: data,
+      where: { id: data.id },
     });
 
-    return bankAccount !== null;
+    return bankAccount.userId === data.userId;
   }
 }

@@ -1,22 +1,22 @@
 version: '3.5'
 
 services:
-  # am-bigbank-backend:
-  #   container_name: am-bigbank-backend
-  #   build:
-  #     context: ./
-  #     dockerfile: Dockerfile
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - DATABASE_URL=${DATABASE_DOCKERIZED_URL}
-  #   volumes:
-  #     - ./src:/usr/src/app/src
-  #   networks:
-  #     - net-am-bigbank
-  #   ports:
-  #     - 3020:3000
-  #     - 9249:9229
+  am-bigbank-front-office:
+    container_name: am-bigbank-front-office
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_DOCKERIZED_URL}
+    volumes:
+      - ./src:/usr/src/app/src
+    networks:
+      - net-am-bigbank
+    ports:
+      - 3020:3000
+      - 9229:9229
   am-bigbank-postgres:
     container_name: am-bigbank-postgres
     image: postgres:16
@@ -34,7 +34,6 @@ services:
 
 networks:
   net-am-bigbank:
-    driver: bridge
 
 volumes:
     am-bigbank-postgres:
