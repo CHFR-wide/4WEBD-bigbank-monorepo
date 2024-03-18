@@ -1,5 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db-access/prisma.service';
 import { TransferDto } from './dto/transfer.dto';
 
@@ -8,10 +7,7 @@ export class TransfersService {
   /**
    *
    */
-  constructor(
-    private prismaService: PrismaService,
-    @Inject('NOTIFICATION_SERVICE') private notificationClient: ClientProxy,
-  ) {}
+  constructor(private prismaService: PrismaService) {}
 
   async create(transfer: TransferDto) {
     return await this.prismaService.transfer.create({
