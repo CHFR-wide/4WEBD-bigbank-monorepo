@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Post,
 } from '@nestjs/common';
@@ -25,11 +26,25 @@ export class TransfersController {
     @UserJwt() user: TUserJwt,
     @Body() transferDto: TransferDto,
   ) {
-    const canWithdraw = await this.transfersService.canWithdraw(transferDto);
+    await this.checkSenderOwnership(transferDto, user.sub);
+    await this.checkSenderFunds(transferDto);
+
+    return await this.transfersService.transferMoney(transferDto);
+  }
+
+  async checkSenderOwnership(transfer: TransferDto, userId: number) {
+    const senderOwnsAccount = await this.transfersService.senderOwnsAccount(
+      transfer,
+      userId,
+    );
+
+    if (!senderOwnsAccount) throw new ForbiddenException();
+  }
+
+  async checkSenderFunds(transfer: TransferDto) {
+    const canWithdraw = await this.transfersService.canWithdraw(transfer);
     if (!canWithdraw) {
       throw new BadRequestException('You do not have enough funds');
     }
-
-    return await this.transfersService.transferMoney(transferDto);
   }
 }

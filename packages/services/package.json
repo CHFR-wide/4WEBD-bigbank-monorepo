@@ -1,0 +1,30 @@
+{
+  "name": "@ambigbank/services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts",
+    "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
+    "start:dev": "pnpm dev",
+    "start:debug": "pnpm dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsup": "^6.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/config": "^3.2.0",
+    "@ambigbank/dtos": "workspace:*",
+    "@nestjs/microservices": "^10.3.3",
+    "apisauce": "^3.0.1",
+    "axios": "^1.6.7",
+    "rxjs": "^7.8.1"
+  }
+}

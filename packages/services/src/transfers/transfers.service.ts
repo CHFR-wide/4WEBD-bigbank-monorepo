@@ -1,9 +1,9 @@
+import { TransferDto } from '@ambigbank/dtos';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { BankAccountsService } from 'src/bank-accounts/bank-accounts.service';
-import { UsersService } from 'src/users/users.service';
-import { TransferDto } from './dto/transfer.dto';
+import { BankAccountsService } from '../bank-accounts/bank-accounts.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class TransfersService {

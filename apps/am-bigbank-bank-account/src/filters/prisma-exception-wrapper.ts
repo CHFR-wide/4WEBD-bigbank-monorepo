@@ -7,7 +7,6 @@ import { throwError } from 'rxjs';
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionWrapper extends BaseExceptionFilter {
   catch(exception: Prisma.PrismaClientKnownRequestError) {
-    console.log(exception);
     return throwError(() => new RpcException(exception));
   }
 }
