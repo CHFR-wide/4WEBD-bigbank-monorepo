@@ -1,0 +1,19 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_MS_TRANSFER")
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
+  output   = "../node_modules/prisma-client"
+}
+
+model Transfer {
+  id            Int         @id @default(autoincrement())
+  amount        Decimal
+  fromAccountId Int         @map("from_account_id")
+  toAccountId   Int         @map("to_account_id")
+
+  @@map("transfer")
+}

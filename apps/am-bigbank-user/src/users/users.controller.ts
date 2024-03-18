@@ -4,7 +4,7 @@ import { Prisma } from 'prisma-client';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
-@Controller('users')
+@Controller()
 export class UsersController {
   /**
    *
