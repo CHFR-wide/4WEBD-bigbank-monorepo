@@ -68,9 +68,11 @@ export class BankAccountsService {
   }
 
   async canWithdraw(id: number, amount: number) {
-    const bankAccount = await this.findOne(id);
+    const data = { id, amount };
 
-    return bankAccount.balance >= amount;
+    return await firstValueFrom(
+      this.banksClient.send({ cmd: 'bankAccount-canWithdraw' }, data),
+    );
   }
 
   async userOwnsAccount(id: number, userId: number) {

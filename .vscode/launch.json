@@ -8,9 +8,9 @@
             "request": "attach",
             "restart": true,
             "sourceMaps": true,
-            "localRoot": "${workspaceFolder}/apps/am-bigbank-customer",
+            "localRoot": "${workspaceFolder}/apps/am-bigbank-front-office",
             "envFile": "${workspaceFolder}/.env",
-            "remoteRoot": "/usr/src/app/apps/am-bigbank-customer",
+            // "remoteRoot": "/usr/src/app/apps/am-bigbank-front-office",
         }
     ]
 }

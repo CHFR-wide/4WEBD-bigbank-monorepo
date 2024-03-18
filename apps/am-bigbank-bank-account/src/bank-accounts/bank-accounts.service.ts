@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BankAccount, Prisma } from 'prisma-client';
+import { BankAccount } from 'prisma-client';
 import { PrismaService } from 'src/db-access/prisma.service';
 
 @Injectable()
@@ -9,62 +9,62 @@ export class BankAccountsService {
    */
   constructor(private prismaService: PrismaService) {}
 
-  async create(data: { label: string; userId: number }): Promise<BankAccount> {
+  async create(label: string, userId: number): Promise<BankAccount> {
     return await this.prismaService.bankAccount.create({
-      data: { ...data, balance: 0 },
+      data: { label, userId, balance: 0 },
     });
   }
 
-  async findAllForUser(data: { userId: number }): Promise<BankAccount[]> {
+  async findAllForUser(userId: number): Promise<BankAccount[]> {
     return await this.prismaService.bankAccount.findMany({
-      where: data,
+      where: { userId },
     });
   }
 
-  async findOne(data: { id: number }): Promise<BankAccount> {
+  async findOne(id: number): Promise<BankAccount> {
     return await this.prismaService.bankAccount.findUniqueOrThrow({
-      where: data,
+      where: { id },
     });
   }
 
-  async update(data: { id: number; label: string }): Promise<BankAccount> {
+  async update(id: number, label: string): Promise<BankAccount> {
     return await this.prismaService.bankAccount.update({
-      data: { label: data.label },
-      where: { id: data.id },
+      data: { label },
+      where: { id },
     });
   }
 
-  async remove(data: { id: number }): Promise<BankAccount> {
+  async remove(id: number): Promise<BankAccount> {
     return await this.prismaService.bankAccount.delete({
-      where: { id: data.id },
+      where: { id },
     });
   }
 
-  async deposit(data: { id: number; amount: number }): Promise<BankAccount> {
+  async deposit(id: number, amount: number): Promise<BankAccount> {
     return this.prismaService.bankAccount.update({
-      where: { id: data.id },
-      data: { balance: { increment: data.amount } },
+      where: { id },
+      data: { balance: { increment: amount } },
     });
   }
 
-  async withdraw(data: { id: number; amount: number }): Promise<BankAccount> {
+  async withdraw(id: number, amount: number): Promise<BankAccount> {
     return this.prismaService.bankAccount.update({
-      where: { id: data.id },
-      data: { balance: { decrement: data.amount } },
+      where: { id: id },
+      data: { balance: { decrement: amount } },
     });
   }
 
-  async canWithdraw(data: { id: number; amount: number }) {
-    const bankAccount = await this.findOne(data);
+  async canWithdraw(id: number, amount: number) {
+    const bankAccount = await this.findOne(id);
 
-    return bankAccount.balance >= new Prisma.Decimal(data.amount);
+    return bankAccount.balance.toNumber() >= amount;
   }
 
-  async userOwnsAccount(data: { id: number; userId: number }) {
+  async userOwnsAccount(id: number, userId: number) {
     const bankAccount = await this.prismaService.bankAccount.findUnique({
-      where: { id: data.id },
+      where: { id },
     });
 
-    return bankAccount.userId === data.userId;
+    return bankAccount && bankAccount.userId === userId;
   }
 }

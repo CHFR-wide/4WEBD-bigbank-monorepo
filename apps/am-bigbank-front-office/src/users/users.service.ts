@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom } from 'rxjs';
 import { SignUpDto } from 'src/auth/dto/auth.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -16,7 +16,11 @@ export class UsersService {
 
   async findOne(id: number) {
     return await firstValueFrom(
-      this.usersClient.send({ cmd: 'user-findOne' }, { id }),
+      this.usersClient.send({ cmd: 'user-findOne' }, { id }).pipe(
+        catchError((e) => {
+          throw e;
+        }),
+      ),
     );
   }
 

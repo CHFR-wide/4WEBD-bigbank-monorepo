@@ -31,8 +31,7 @@ export class UsersController {
   async findOneByEmail(data: { email: string }) {
     const user = await this.usersService.findOneByEmail(data.email);
 
-    const { password, ...safeUser } = user;
-    return safeUser;
+    return user;
   }
 
   @MessagePattern({ cmd: 'user-update' })
