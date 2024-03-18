@@ -1,7 +1,8 @@
-import { CreateBankAccountDto, UpdateBankAccountDto } from '@ambigbank/dtos';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
+
+export type TBankAccount = {label: string}
 
 @Injectable()
 export class BankAccountsService {
@@ -10,8 +11,8 @@ export class BankAccountsService {
    */
   constructor(@Inject('BANKS_SERVICE') private banksClient: ClientProxy) {}
 
-  async create(userId: number, createBankAccountDto: CreateBankAccountDto) {
-    const data = { label: createBankAccountDto.label, userId: userId };
+  async create(userId: number, bankAccount: TBankAccount) {
+    const data = {userId, label: bankAccount.label}
 
     return await firstValueFrom(
       this.banksClient.send({ cmd: 'bankAccount-create' }, data),
@@ -34,8 +35,8 @@ export class BankAccountsService {
     );
   }
 
-  async update(id: number, updateBankAccountDto: UpdateBankAccountDto) {
-    const data = { id, label: updateBankAccountDto.label };
+  async update(id: number, bankAccount: Partial<TBankAccount>) {
+    const data = { id, label: bankAccount.label };
 
     return await firstValueFrom(
       this.banksClient.send({ cmd: 'bankAccount-update' }, data),

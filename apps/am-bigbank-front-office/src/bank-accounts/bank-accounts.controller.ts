@@ -1,3 +1,4 @@
+import { BankAccountsService } from '@ambigbank/services';
 import {
   BadRequestException,
   Body,
@@ -11,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { TUserJwt, UserJwt } from 'src/decorators/req-user.decorator';
-import { BankAccountsService } from './bank-accounts.service';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
 import { WithdrawDto } from './dto/withdraw.dto';

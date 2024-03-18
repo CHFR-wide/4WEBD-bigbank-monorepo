@@ -1,8 +1,8 @@
+import { UsersService } from '@ambigbank/services';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
 import { TUserJwt } from 'src/decorators/req-user.decorator';
-import { UsersService } from 'src/users/users.service';
 import { SignInDto, SignUpDto } from './dto/auth.dto';
 
 @Injectable()

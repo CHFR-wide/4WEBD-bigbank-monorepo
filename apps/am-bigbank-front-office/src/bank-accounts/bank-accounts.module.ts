@@ -1,9 +1,9 @@
+import { BankAccountsService } from '@ambigbank/services';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TEnvironmentValues } from 'src/environment';
 import { BankAccountsController } from './bank-accounts.controller';
-import { BankAccountsService } from './bank-accounts.service';
 
 @Module({
   imports: [

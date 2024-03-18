@@ -1,3 +1,4 @@
+import { TransfersService } from '@ambigbank/services';
 import {
   BadRequestException,
   Body,
@@ -9,7 +10,6 @@ import {
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { TUserJwt, UserJwt } from 'src/decorators/req-user.decorator';
 import { TransferDto } from './dto/transfer.dto';
-import { TransfersService } from './transfers.service';
 
 @ApiBearerAuth()
 @Controller('transfers')

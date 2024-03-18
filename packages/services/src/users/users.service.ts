@@ -1,13 +1,20 @@
-import { SignUpDto, UpdateUserDto } from '@ambigbank/dtos';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError, firstValueFrom } from 'rxjs';
+
+type TUser = {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password: string;
+}
 
 @Injectable()
 export class UsersService {
   constructor(@Inject('USERS_SERVICE') private usersClient: ClientProxy) {}
 
-  async create(user: SignUpDto) {
+  async create(user: TUser) {
     return await firstValueFrom(
       this.usersClient.send({ cmd: 'user-create' }, user),
     );
@@ -29,7 +36,7 @@ export class UsersService {
     );
   }
 
-  async update(id: number, update: UpdateUserDto) {
+  async update(id: number, update: Partial<TUser>) {
     return await firstValueFrom(
       this.usersClient.send({ cmd: 'user-update' }, { id, update }),
     );

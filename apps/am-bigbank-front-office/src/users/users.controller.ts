@@ -1,8 +1,8 @@
+import { UsersService } from '@ambigbank/services';
 import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TUserJwt, UserJwt } from 'src/decorators/req-user.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UsersService } from './users.service';
 
 @ApiBearerAuth()
 @ApiTags('Users')

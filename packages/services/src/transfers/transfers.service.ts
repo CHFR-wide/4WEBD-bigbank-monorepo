@@ -1,9 +1,14 @@
-import { TransferDto } from '@ambigbank/dtos';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { BankAccountsService } from '../bank-accounts/bank-accounts.service';
 import { UsersService } from '../users/users.service';
+
+type TTransfer = {
+  fromAccountId: number;
+  toAccountId: number;
+  amount: number;
+}
 
 @Injectable()
 export class TransfersService {
@@ -23,14 +28,14 @@ export class TransfersService {
     );
   }
 
-  async canWithdraw(transferDto: TransferDto) {
+  async canWithdraw(transferDto: TTransfer) {
     return await this.bankAccountsService.canWithdraw(
       transferDto.fromAccountId,
       transferDto.amount,
     );
   }
 
-  async transferMoney(transferDto: TransferDto) {
+  async transferMoney(transferDto: TTransfer) {
     await Promise.all([
       this.bankAccountsService.findOne(transferDto.fromAccountId),
       this.bankAccountsService.findOne(transferDto.toAccountId),
@@ -61,7 +66,7 @@ export class TransfersService {
     return transfer;
   }
 
-  async notifyTransactionPartners(transferDto: TransferDto) {
+  async notifyTransactionPartners(transferDto: TTransfer) {
     {
       const { userId: senderId } = await this.bankAccountsService.findOne(
         transferDto.fromAccountId,
@@ -96,7 +101,7 @@ export class TransfersService {
     }
   }
 
-  async senderOwnsAccount(transfer: TransferDto, userId: number) {
+  async senderOwnsAccount(transfer: TTransfer, userId: number) {
     return await this.bankAccountsService.userOwnsAccount(
       transfer.fromAccountId,
       userId,

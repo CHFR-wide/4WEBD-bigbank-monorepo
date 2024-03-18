@@ -124,6 +124,9 @@ importers:
 
   apps/am-bigbank-front-office:
     dependencies:
+      '@ambigbank/services':
+        specifier: workspace:*
+        version: link:../../packages/services
       '@nestjs/common':
         specifier: ^10.0.0
         version: 10.3.3(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.1)(rxjs@7.8.1)
@@ -628,42 +631,8 @@ importers:
         specifier: ^5.1.6
         version: 5.1.6
 
-  packages/dtos:
-    dependencies:
-      '@nestjs/common':
-        specifier: ^10.0.0
-        version: 10.3.3(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.1)(rxjs@7.8.1)
-      '@nestjs/config':
-        specifier: ^3.2.0
-        version: 3.2.0(@nestjs/common@10.3.3)(rxjs@7.8.1)
-      '@nestjs/swagger':
-        specifier: ^7.3.0
-        version: 7.3.0(@nestjs/common@10.3.3)(@nestjs/core@10.3.3)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.1)
-      apisauce:
-        specifier: ^3.0.1
-        version: 3.0.1
-      axios:
-        specifier: ^1.6.7
-        version: 1.6.8
-      class-transformer:
-        specifier: ^0.5.1
-        version: 0.5.1
-      class-validator:
-        specifier: ^0.14.1
-        version: 0.14.1
-    devDependencies:
-      tsup:
-        specifier: ^6.7.0
-        version: 6.7.0(typescript@5.4.2)
-      typescript:
-        specifier: ^5.3.3
-        version: 5.4.2
-
   packages/services:
     dependencies:
-      '@ambigbank/dtos':
-        specifier: workspace:*
-        version: link:../dtos
       '@nestjs/common':
         specifier: ^10.3.3
         version: 10.3.3(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.1)(rxjs@7.8.1)
