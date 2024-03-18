@@ -12,7 +12,7 @@ export class TransfersController {
     return await this.transfersService.findAllForUser(data.userId);
   }
 
-  @MessagePattern({ cmd: 'transfer-Create' })
+  @MessagePattern({ cmd: 'transfer-create' })
   async create(data: { transfer: TransferDto }) {
     return await this.transfersService.create(data.transfer);
   }

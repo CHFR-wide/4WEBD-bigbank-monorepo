@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Prisma } from '@repo/database';
 import { firstValueFrom } from 'rxjs';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
@@ -71,7 +70,7 @@ export class BankAccountsService {
   async canWithdraw(id: number, amount: number) {
     const bankAccount = await this.findOne(id);
 
-    return bankAccount.balance >= new Prisma.Decimal(amount);
+    return bankAccount.balance >= amount;
   }
 
   async userOwnsAccount(id: number, userId: number) {

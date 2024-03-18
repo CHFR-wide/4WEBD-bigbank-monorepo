@@ -15,9 +15,9 @@ export const environmentValues = () => ({
       host: process.env.MS_USER_HOST,
       port: process.env.MS_USER_PORT,
     },
-    msTransaction: {
-      host: process.env.MS_TRANSACTION_HOST,
-      port: process.env.MS_TRANSACTION_PORT,
+    msTransfer: {
+      host: process.env.MS_TRANSFER_HOST,
+      port: process.env.MS_TRANSFER_PORT,
     },
   },
 });
@@ -27,5 +27,9 @@ export const environmentValidationSchema = Joi.object({
   MS_NOTIFICATION_PORT: Joi.required(),
   MS_BANK_ACCOUNT_HOST: Joi.required(),
   MS_BANK_ACCOUNT_PORT: Joi.required(),
+  MS_USER_HOST: Joi.required(),
+  MS_USER_PORT: Joi.required(),
+  MS_TRANSFER_HOST: Joi.required(),
+  MS_TRANSFER_PORT: Joi.required(),
 });
 export type TEnvironmentValues = ReturnType<typeof environmentValues>['env'];

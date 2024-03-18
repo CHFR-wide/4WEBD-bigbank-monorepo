@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TEnvironmentValues } from 'src/environment';
-import { PrismaService } from 'src/prisma.service';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
@@ -31,7 +30,7 @@ import { UsersService } from './users.service';
     }),
   ],
   controllers: [UsersController],
-  providers: [UsersService, PrismaService],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}

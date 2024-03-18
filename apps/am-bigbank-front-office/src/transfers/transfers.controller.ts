@@ -25,14 +25,11 @@ export class TransfersController {
     @UserJwt() user: TUserJwt,
     @Body() transferDto: TransferDto,
   ) {
-    const canWithdraw = await this.transfersService.canWithdraw(
-      transferDto,
-      user.sub,
-    );
+    const canWithdraw = await this.transfersService.canWithdraw(transferDto);
     if (!canWithdraw) {
       throw new BadRequestException('You do not have enough funds');
     }
 
-    return await this.transfersService.transferMoney(transferDto, user.sub);
+    return await this.transfersService.transferMoney(transferDto);
   }
 }

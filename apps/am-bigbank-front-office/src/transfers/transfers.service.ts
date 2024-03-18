@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { BankAccountsService } from 'src/bank-accounts/bank-accounts.service';
-import { PrismaService } from 'src/prisma.service';
+import { UsersService } from 'src/users/users.service';
 import { TransferDto } from './dto/transfer.dto';
 
 @Injectable()
@@ -11,44 +11,37 @@ export class TransfersService {
    *
    */
   constructor(
-    private prismaService: PrismaService,
     private bankAccountsService: BankAccountsService,
+    private usersService: UsersService,
     @Inject('NOTIFICATION_SERVICE') private notificationClient: ClientProxy,
+    @Inject('TRANSFER_SERVICE') private transferClient: ClientProxy,
   ) {}
 
   async findAllForUser(userId: number) {
-    return await this.prismaService.transfer.findMany({
-      where: { OR: [{ fromAccount: { userId } }, { toAccount: { userId } }] },
-    });
+    return await firstValueFrom(
+      this.transferClient.send({ cmd: 'transfer-findAllForUser' }, { userId }),
+    );
   }
 
-  async canWithdraw(transferDto: TransferDto, userId: number) {
+  async canWithdraw(transferDto: TransferDto) {
     return await this.bankAccountsService.canWithdraw(
       transferDto.fromAccountId,
-      userId,
       transferDto.amount,
     );
   }
 
-  async transferMoney(transferDto: TransferDto, userId: number) {
+  async transferMoney(transferDto: TransferDto) {
     await Promise.all([
-      this.bankAccountsService.findOne(transferDto.fromAccountId, userId),
-      this.bankAccountsService.findOne(transferDto.toAccountId, userId),
+      this.bankAccountsService.findOne(transferDto.fromAccountId),
+      this.bankAccountsService.findOne(transferDto.toAccountId),
     ]);
 
-    const [transfer] = await this.prismaService.$transaction([
-      this.prismaService.transfer.create({
-        data: transferDto,
-      }),
-      this.prismaService.bankAccount.update({
-        where: { id: transferDto.fromAccountId },
-        data: { balance: { decrement: transferDto.amount } },
-      }),
-      this.prismaService.bankAccount.update({
-        where: { id: transferDto.toAccountId },
-        data: { balance: { increment: transferDto.amount } },
-      }),
-    ]);
+    const transfer = await firstValueFrom(
+      this.transferClient.send(
+        { cmd: 'transfer-create' },
+        { transfer: transferDto },
+      ),
+    );
 
     this.notifyTransactionPartners(transferDto).catch((e) => {
       console.log('Notification service error: ', e);
@@ -59,14 +52,15 @@ export class TransfersService {
 
   async notifyTransactionPartners(transferDto: TransferDto) {
     {
-      const [sender, recipient] = await Promise.all([
-        this.prismaService.user.findFirst({
-          where: { bankAccounts: { some: { id: transferDto.fromAccountId } } },
-        }),
-        this.prismaService.user.findFirst({
-          where: { bankAccounts: { some: { id: transferDto.toAccountId } } },
-        }),
-      ]);
+      const { userId: senderId } = await this.bankAccountsService.findOne(
+        transferDto.fromAccountId,
+      );
+      const { userId: recipientId } = await this.bankAccountsService.findOne(
+        transferDto.toAccountId,
+      );
+
+      const sender = await this.usersService.findOne(senderId);
+      const recipient = await this.usersService.findOne(recipientId);
 
       await Promise.all([
         firstValueFrom(

@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from 'prisma-client';
 
 const prisma = new PrismaClient();
 
@@ -11,7 +11,7 @@ async function createTestUsers() {
       lastName: 'dumb',
       email: 'user@test.com',
       password: '$2a$10$bQsXqnDSTW27ESapuHq2xe1DhTjvj67s2WZylaB5U6XX9NzczhsT.',
-      phoneNumber: '+262692000000'
+      phoneNumber: '+262692000000',
     },
     update: {},
   });
