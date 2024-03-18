@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Attach to dockerized Nest application",
+            "type": "node",
+            "address": "localhost",
+            "port": 9229,
+            "request": "attach",
+            "restart": true,
+            "sourceMaps": true,
+            "localRoot": "${workspaceFolder}",
+            "envFile": "${workspaceFolder}/.env",
+            "remoteRoot": "/usr/src/app",
+        }
+    ]
+}

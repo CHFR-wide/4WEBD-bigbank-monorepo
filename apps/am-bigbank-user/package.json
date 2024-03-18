@@ -1,5 +1,5 @@
 {
-  "name": "am-bigbank-bank-account",
+  "name": "am-bigbank-user",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -29,6 +29,7 @@
     "@nestjs/microservices": "^10.3.3",
     "@nestjs/platform-express": "^10.0.0",
     "@prisma/client": "^4.13.0",
+    "bcryptjs": "^2.4.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },

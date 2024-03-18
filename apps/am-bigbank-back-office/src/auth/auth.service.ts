@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { TUserJwt } from 'src/decorators/req-user.decorator';
 import { UsersService } from 'src/users/users.service';
@@ -16,7 +15,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  constructUserToken(user: User) {
+  constructUserToken(user: any) {
     const payload: TUserJwt = {
       sub: user.id,
       firstName: user.firstName,

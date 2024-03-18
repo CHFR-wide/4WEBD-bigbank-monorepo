@@ -9,6 +9,7 @@
     },
     "db:migrate:dev": {},
     "db:seed": {},
+    "db:generate": {},
     "stop": {},
     "clean": {},
     "start:dev": {

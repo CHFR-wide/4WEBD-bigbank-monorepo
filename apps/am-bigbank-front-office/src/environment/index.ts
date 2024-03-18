@@ -11,6 +11,14 @@ export const environmentValues = () => ({
       host: process.env.MS_BANK_ACCOUNT_HOST,
       port: process.env.MS_BANK_ACCOUNT_PORT,
     },
+    msUser: {
+      host: process.env.MS_USER_HOST,
+      port: process.env.MS_USER_PORT,
+    },
+    msTransaction: {
+      host: process.env.MS_TRANSACTION_HOST,
+      port: process.env.MS_TRANSACTION_PORT,
+    },
   },
 });
 export const environmentValidationSchema = Joi.object({

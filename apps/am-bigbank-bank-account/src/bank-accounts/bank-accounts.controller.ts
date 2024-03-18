@@ -1,6 +1,6 @@
 import { BadRequestException, Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { BankAccount } from '@repo/database';
+import { BankAccount } from 'prisma-client';
 import { BankAccountsService } from './bank-accounts.service';
 
 @Controller()

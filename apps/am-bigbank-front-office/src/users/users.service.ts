@@ -1,45 +1,40 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import { PrismaService } from 'src/prisma.service';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+import { SignUpDto } from 'src/auth/dto/auth.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(@Inject('USERS_SERVICE') private usersClient: ClientProxy) {}
 
-  async create(user: Prisma.UserCreateInput) {
-    return await this.prisma.user.create({ data: user });
+  async create(user: SignUpDto) {
+    return await firstValueFrom(
+      this.usersClient.send({ cmd: 'user-create' }, user),
+    );
   }
 
   async findOne(id: number) {
-    return await this.prisma.user.findUniqueOrThrow({ where: { id } });
+    return await firstValueFrom(
+      this.usersClient.send({ cmd: 'user-findOne' }, { id }),
+    );
   }
 
-  async findAll() {
-    return await this.prisma.user.findMany();
+  async findOneByEmail(email: string) {
+    return await firstValueFrom(
+      this.usersClient.send({ cmd: 'user-findOneByEmail' }, { email }),
+    );
   }
 
-  async findByEmail(email: string) {
-    return await this.prisma.user.findUniqueOrThrow({ where: { email } });
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    if (updateUserDto.password) {
-      const saltOrRounds = 10;
-      updateUserDto.password = await bcrypt.hash(
-        updateUserDto.password,
-        saltOrRounds,
-      );
-    }
-
-    return await this.prisma.user.update({
-      where: { id },
-      data: updateUserDto,
-    });
+  async update(id: number, update: UpdateUserDto) {
+    return await firstValueFrom(
+      this.usersClient.send({ cmd: 'user-update' }, { id, update }),
+    );
   }
 
   async remove(id: number) {
-    return await this.prisma.user.delete({ where: { id } });
+    return await firstValueFrom(
+      this.usersClient.send({ cmd: 'user-delete' }, { id }),
+    );
   }
 }

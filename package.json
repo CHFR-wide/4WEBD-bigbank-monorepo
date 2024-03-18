@@ -8,6 +8,7 @@
     "build": "turbo run build",
     "db:migrate:dev": "dotenv -- turbo run db:migrate:dev",
     "db:seed": "dotenv -- turbo run db:seed",
+    "db:generate": "dotenv -- turbo run db:generate",
     "stop": "turbo run stop",
     "clean": "turbo run clean",
     "start:dev": "dotenv -- turbo run start:dev",
