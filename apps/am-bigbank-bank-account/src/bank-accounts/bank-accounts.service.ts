@@ -1,4 +1,9 @@
-import { TransfersAmqpService } from '@ambigbank/services';
+import {
+  ETransferError,
+  ETransferStatus,
+  NotificationsAmqpService,
+  TransfersAmqpService,
+} from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
 import { BankAccount } from 'prisma-client';
 import { PrismaService } from 'src/db-access/prisma.service';
@@ -11,6 +16,7 @@ export class BankAccountsService {
   constructor(
     private prismaService: PrismaService,
     private transfersAmqpService: TransfersAmqpService,
+    private notificationsAmqpService: NotificationsAmqpService,
   ) {}
 
   async create(label: string, userId: number): Promise<BankAccount> {
@@ -73,14 +79,49 @@ export class BankAccountsService {
   }
 
   async transferMoney(
+    senderId: number,
     transferId: number,
     fromAccountId: number,
     toAccountId: number,
     amount: number,
   ) {
-    try {
-      await this.canWithdraw(fromAccountId, amount);
+    const senderAccount = await this.findOne(fromAccountId).catch(() => null);
+    const recipientAccount = await this.findOne(toAccountId).catch(() => null);
 
+    if (!senderAccount) {
+      this.transfersAmqpService.ackTransfer(
+        transferId,
+        ETransferStatus.ERROR,
+        ETransferError.SENDER_ACCOUNT_NOT_FOUND,
+      );
+      return;
+    }
+    if (!recipientAccount) {
+      this.transfersAmqpService.ackTransfer(
+        transferId,
+        ETransferStatus.ERROR,
+        ETransferError.RECIPIENT_ACCOUNT_NOT_FOUND,
+      );
+      return;
+    }
+    if (!(await this.userOwnsAccount(fromAccountId, senderId))) {
+      this.transfersAmqpService.ackTransfer(
+        transferId,
+        ETransferStatus.ERROR,
+        ETransferError.SENDER_ACCOUNT_NOT_OWNER,
+      );
+      return;
+    }
+    if (!(await this.canWithdraw(fromAccountId, amount))) {
+      this.transfersAmqpService.ackTransfer(
+        transferId,
+        ETransferStatus.ERROR,
+        ETransferError.SENDER_ACCOUNT_NOT_ENOUGH_FUNDS,
+      );
+      return;
+    }
+
+    try {
       await this.prismaService.$transaction([
         this.prismaService.bankAccount.update({
           where: { id: fromAccountId },
@@ -91,10 +132,35 @@ export class BankAccountsService {
           data: { balance: { increment: amount } },
         }),
       ]);
-
-      this.transfersAmqpService.setTransferDone(transferId);
     } catch (error) {
-      this.transfersAmqpService.setTransferError(transferId);
+      this.transfersAmqpService.ackTransfer(
+        transferId,
+        ETransferStatus.ERROR,
+        ETransferError.TRANSACTION_ERROR,
+      );
+      return;
     }
+
+    this.transfersAmqpService.ackTransfer(transferId, ETransferStatus.DONE);
+    this.notifyTransferActors(
+      senderAccount.userId,
+      recipientAccount.userId,
+      amount,
+    );
+  }
+
+  async notifyTransferActors(
+    senderId: number,
+    recipientId: number,
+    amount: number,
+  ) {
+    this.notificationsAmqpService.notifyMobile(
+      senderId,
+      `Your transfer of ${amount} euros has succeeded`,
+    );
+    this.notificationsAmqpService.notifyMobile(
+      recipientId,
+      `You have received a transfer of ${amount} euros`,
+    );
   }
 }

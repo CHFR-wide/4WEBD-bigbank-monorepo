@@ -23,29 +23,11 @@ export class TransfersTcpService {
     );
   }
 
-  async transferMoney(transferDto: TTransfer) {
+  async transferMoney(userId: number, transfer: TTransfer) {
     return await firstValueFrom(
       this.transferClient.send(
         { cmd: 'transfer-create' },
-        { transfer: transferDto },
-      ),
-    );
-  }
-
-  async validateTransfer(id: number) {
-    return await firstValueFrom(
-      this.transferClient.send(
-        { cmd: 'transfer-status-done' },
-        { id },
-      ),
-    );
-  }
-
-  async errorTransfer(id: number) {
-    return await firstValueFrom(
-      this.transferClient.send(
-        { cmd: 'transfer-status-error' },
-        { id },
+        { userId, transfer },
       ),
     );
   }

@@ -10,6 +10,7 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "ts-node prisma/seed.ts",
     "db:generate": "prisma generate",
+    "db:format": "prisma format",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

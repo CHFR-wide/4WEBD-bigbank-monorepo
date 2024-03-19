@@ -9,18 +9,13 @@ generator client {
   output        = "../node_modules/prisma-client"
 }
 
-enum ETransferStatus {
-  PROCESSING
-  DONE
-  ERROR
-}
-
 model Transfer {
-  id            Int             @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   amount        Decimal
-  fromAccountId Int             @map("from_account_id")
-  toAccountId   Int             @map("to_account_id")
-  status        ETransferStatus @default(PROCESSING)
+  fromAccountId Int     @map("from_account_id")
+  toAccountId   Int     @map("to_account_id")
+  status        String?
+  error         String?
 
   @@map("transfer")
 }

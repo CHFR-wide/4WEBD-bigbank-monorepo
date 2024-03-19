@@ -1,10 +1,5 @@
 import { TransfersTcpService } from '@ambigbank/services';
-import {
-  Body,
-  Controller,
-  Get,
-  Post
-} from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { TUserJwt, UserJwt } from 'src/decorators/req-user.decorator';
 import { TransferDto } from './dto/transfer.dto';
@@ -24,6 +19,6 @@ export class TransfersController {
     @UserJwt() user: TUserJwt,
     @Body() transferDto: TransferDto,
   ) {
-    return await this.transfersService.transferMoney(transferDto);
+    return await this.transfersService.transferMoney(user.sub, transferDto);
   }
 }

@@ -1,12 +1,7 @@
-import {
-  BankAccountsAmqpService,
-  BankAccountsTcpService,
-  NotificationsAmqpService,
-} from '@ambigbank/services';
+import { BankAccountsAmqpService, ETransferStatus } from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from 'prisma-client';
 import { PrismaService } from 'src/db-access/prisma.service';
-import { TransferDto } from './dto/transfer.dto';
 
 @Injectable()
 export class TransfersService {
@@ -15,18 +10,19 @@ export class TransfersService {
    */
   constructor(
     private prismaService: PrismaService,
-    private readonly notificationsService: NotificationsAmqpService,
-    private readonly bankAccountsService: BankAccountsTcpService,
     private readonly bankAccountsAmqpService: BankAccountsAmqpService,
   ) {}
 
-  async create(transfer: TransferDto) {
+  async create(
+    userId: number,
+    transfer: { fromAccountId: number; toAccountId: number; amount: number },
+  ) {
     const res = await this.prismaService.transfer.create({
-      data: transfer,
+      data: { ...transfer, status: ETransferStatus.PROCESSING },
     });
 
-    this.notifyTransferActors(transfer);
     this.bankAccountsAmqpService.transferMoney(
+      userId,
       res.id,
       transfer.fromAccountId,
       transfer.toAccountId,
@@ -41,26 +37,6 @@ export class TransfersService {
       where: { id },
       data: update,
     });
-  }
-
-  async notifyTransferActors(transfer: TransferDto) {
-    const senderAccount = await this.bankAccountsService.findOne(
-      transfer.fromAccountId,
-    );
-    const recipientAccount = await this.bankAccountsService.findOne(
-      transfer.toAccountId,
-    );
-
-    await Promise.all([
-      this.notificationsService.notifyMobile(
-        senderAccount.userId,
-        `Your transfer of ${transfer.amount} euros has succeeded`,
-      ),
-      this.notificationsService.notifyMobile(
-        recipientAccount.userId,
-        `You have received a transfer of ${transfer.amount} euros`,
-      ),
-    ]);
   }
 
   async findAllForUser(userId: number) {

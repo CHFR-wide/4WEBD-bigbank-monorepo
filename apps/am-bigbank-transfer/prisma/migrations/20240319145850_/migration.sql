@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "ETransferError" AS ENUM ('SENDER_NOT_FOUND', 'RECIPIENT_NOT_FOUND', 'SENDER_NOT_ACCOUNT_OWNER', 'SENDER_NOT_ENOUGH_FUNDS', 'SERVER_ERROR');
+
+-- AlterTable
+ALTER TABLE "transfer" ADD COLUMN     "error" "ETransferError";

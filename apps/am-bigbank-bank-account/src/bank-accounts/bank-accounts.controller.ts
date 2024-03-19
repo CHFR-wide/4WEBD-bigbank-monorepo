@@ -56,12 +56,14 @@ export class BankAccountsController {
 
   @EventPattern({ cmd: 'bankAccount-transferMoney' })
   async transferMoney(data: {
+    userId: number;
     transferId: number;
     fromAccountId: number;
     toAccountId: number;
     amount: number;
   }) {
     await this.bankAccountsService.transferMoney(
+      data.userId,
       data.transferId,
       data.fromAccountId,
       data.toAccountId,

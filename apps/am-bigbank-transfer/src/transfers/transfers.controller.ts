@@ -1,7 +1,6 @@
+import { ETransferError, ETransferStatus } from '@ambigbank/services';
 import { Controller } from '@nestjs/common';
 import { EventPattern, MessagePattern } from '@nestjs/microservices';
-import { ETransferStatus } from 'prisma-client';
-import { TransferDto } from './dto/transfer.dto';
 import { TransfersService } from './transfers.service';
 
 @Controller()
@@ -14,21 +13,22 @@ export class TransfersController {
   }
 
   @MessagePattern({ cmd: 'transfer-create' })
-  async create(data: { transfer: TransferDto }) {
-    return await this.transfersService.create(data.transfer);
+  async create(data: {
+    userId: number;
+    transfer: { fromAccountId: number; toAccountId: number; amount: number };
+  }) {
+    return await this.transfersService.create(data.userId, data.transfer);
   }
 
-  @EventPattern({ cmd: 'transfer-status-done' })
-  async validateTransfer(data: { id: number }) {
+  @EventPattern({ cmd: 'transfer-ack' })
+  async validateTransfer(data: {
+    id: number;
+    status: ETransferStatus;
+    error?: ETransferError;
+  }) {
     return await this.transfersService.update(data.id, {
-      status: ETransferStatus.DONE,
-    });
-  }
-
-  @EventPattern({ cmd: 'transfer-status-error' })
-  async errorTransfer(data: { id: number }) {
-    return await this.transfersService.update(data.id, {
-      status: ETransferStatus.ERROR,
+      status: data.status,
+      ...(data.error && { error: data.error }),
     });
   }
 }
