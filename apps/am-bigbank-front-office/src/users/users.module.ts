@@ -15,8 +15,6 @@ import { UsersController } from './users.controller';
           useFactory: (configService: ConfigService) => {
             const env = configService.get<TEnvironmentValues>('env');
 
-            console.log(env);
-
             return {
               transport: Transport.TCP,
               options: {

@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
-export type TBankAccount = {label: string}
+type TBankAccount = {label: string}
 
 @Injectable()
 export class BankAccountsService {
