@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class NotificationsService {
-  constructor(@Inject('NOTIFICATIONS_SERVICE') private notificationsClient: ClientProxy) {}
+  constructor(@Inject('RMQ_MS_NOTIFICATION') private notificationsClient: ClientProxy) {}
 
   async notifyMobile(userId: number, content: string) {
     return await firstValueFrom(

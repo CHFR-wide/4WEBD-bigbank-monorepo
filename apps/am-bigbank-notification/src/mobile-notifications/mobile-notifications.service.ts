@@ -10,7 +10,6 @@ export class MobileNotificationsService {
   constructor(private usersService: UsersService) {}
 
   async sendNotification(data: SendMobileNotificationDto) {
-    console.log(data);
     const user = await this.usersService.findOne(data.userId);
 
     console.log(
