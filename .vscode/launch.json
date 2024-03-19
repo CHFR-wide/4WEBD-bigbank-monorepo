@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Attach to front-office docker",
+            "name": "Attach to front-office",
             "type": "node",
             "address": "localhost",
             "port": 9229,
@@ -10,7 +10,6 @@
             "sourceMaps": true,
             "localRoot": "${workspaceFolder}/apps/am-bigbank-front-office",
             "envFile": "${workspaceFolder}/.env",
-            // "remoteRoot": "/usr/src/app/apps/am-bigbank-front-office",
         }
     ]
 }
