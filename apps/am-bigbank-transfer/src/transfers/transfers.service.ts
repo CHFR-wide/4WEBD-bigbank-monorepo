@@ -1,6 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
+import { BankAccountsService, NotificationsService } from '@ambigbank/services';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/db-access/prisma.service';
 import { TransferDto } from './dto/transfer.dto';
 
@@ -11,7 +10,8 @@ export class TransfersService {
    */
   constructor(
     private prismaService: PrismaService,
-    @Inject('RMQ_SERVICE') private readonly notificationClient: ClientProxy,
+    private readonly notificationsService: NotificationsService,
+    private readonly bankAccountsService: BankAccountsService,
   ) {}
 
   async create(transfer: TransferDto) {
@@ -19,28 +19,29 @@ export class TransfersService {
       data: transfer,
     });
 
-    await Promise.all([
-      firstValueFrom(
-        this.notificationClient.send<boolean>(
-          { cmd: 'notify-mobile' },
-          {
-            phoneNumber: 'sender.phoneNumber',
-            content: `Your transfer of ${'transferDto.amount'} has succeeded`,
-          },
-        ),
-      ),
-      firstValueFrom(
-        this.notificationClient.send<boolean>(
-          { cmd: 'notify-mobile' },
-          {
-            phoneNumber: 'recipient.phoneNumber',
-            content: `You have received a transfer of ${'transferDto.amount'}`,
-          },
-        ),
-      ),
-    ]);
+    await this.notifyTransferActors(transfer);
 
     return res;
+  }
+
+  async notifyTransferActors(transfer: TransferDto) {
+    const senderAccount = await this.bankAccountsService.findOne(
+      transfer.fromAccountId,
+    );
+    const recipientAccount = await this.bankAccountsService.findOne(
+      transfer.toAccountId,
+    );
+
+    await Promise.all([
+      this.notificationsService.notifyMobile(
+        senderAccount.userId,
+        `Your transfer of ${transfer.amount} euros has succeeded`,
+      ),
+      this.notificationsService.notifyMobile(
+        recipientAccount.userId,
+        `You have received a transfer of ${transfer.amount} euros`,
+      ),
+    ]);
   }
 
   async findAllForUser(userId: number) {

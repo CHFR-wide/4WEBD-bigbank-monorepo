@@ -1,4 +1,4 @@
 export class SendMobileNotificationDto {
-  phoneNumber: string;
+  userId: number;
   content: string;
 }

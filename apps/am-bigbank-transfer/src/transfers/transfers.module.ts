@@ -1,3 +1,4 @@
+import { BankAccountsService, NotificationsService } from '@ambigbank/services';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -8,7 +9,7 @@ import { TransfersService } from './transfers.service';
   imports: [
     ClientsModule.registerAsync([
       {
-        name: 'RMQ_SERVICE',
+        name: 'RMQ_MS_NOTIFICATION',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
           transport: Transport.RMQ,
@@ -24,9 +25,21 @@ import { TransfersService } from './transfers.service';
         }),
         inject: [ConfigService],
       },
+      {
+        name: 'BANKS_SERVICE',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.getOrThrow('MS_BANK_ACCOUNT_HOST'),
+            port: +configService.getOrThrow('MS_BANK_ACCOUNT_PORT'),
+          },
+        }),
+        inject: [ConfigService],
+      },
     ]),
   ],
   controllers: [TransfersController],
-  providers: [TransfersService],
+  providers: [TransfersService, BankAccountsService, NotificationsService],
 })
 export class TransfersModule {}
