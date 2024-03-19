@@ -1,7 +1,7 @@
 import {
   BankAccountsAmqpService,
-  BankAccountsService,
-  NotificationsService,
+  BankAccountsTcpService,
+  NotificationsAmqpService,
 } from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from 'prisma-client';
@@ -15,8 +15,8 @@ export class TransfersService {
    */
   constructor(
     private prismaService: PrismaService,
-    private readonly notificationsService: NotificationsService,
-    private readonly bankAccountsService: BankAccountsService,
+    private readonly notificationsService: NotificationsAmqpService,
+    private readonly bankAccountsService: BankAccountsTcpService,
     private readonly bankAccountsAmqpService: BankAccountsAmqpService,
   ) {}
 

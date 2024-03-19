@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
-export class NotificationsService {
+export class NotificationsAmqpService {
   constructor(@Inject('RMQ_MS_NOTIFICATION') private notificationsClient: ClientProxy) {}
 
   async notifyMobile(userId: number, content: string) {

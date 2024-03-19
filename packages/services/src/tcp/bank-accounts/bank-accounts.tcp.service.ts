@@ -5,11 +5,11 @@ import { firstValueFrom } from 'rxjs';
 type TBankAccount = {label: string}
 
 @Injectable()
-export class BankAccountsService {
+export class BankAccountsTcpService {
   /**
    *
    */
-  constructor(@Inject('BANKS_SERVICE') private banksClient: ClientProxy) {}
+  constructor(@Inject('TCP_MS_BANK_ACCOUNT') private banksClient: ClientProxy) {}
 
   async create(userId: number, bankAccount: TBankAccount) {
     const data = {userId, label: bankAccount.label}

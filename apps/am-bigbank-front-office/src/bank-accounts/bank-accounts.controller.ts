@@ -1,4 +1,4 @@
-import { BankAccountsService } from '@ambigbank/services';
+import { BankAccountsTcpService } from '@ambigbank/services';
 import {
   BadRequestException,
   Body,
@@ -19,7 +19,7 @@ import { WithdrawDto } from './dto/withdraw.dto';
 @ApiBearerAuth()
 @Controller('bank-account')
 export class BankAccountsController {
-  constructor(private readonly bankAccountService: BankAccountsService) {}
+  constructor(private readonly bankAccountService: BankAccountsTcpService) {}
 
   @Post()
   async create(

@@ -1,4 +1,4 @@
-import { UsersService } from '@ambigbank/services';
+import { UsersTcpService } from '@ambigbank/services';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt from 'bcryptjs';
@@ -11,7 +11,7 @@ export class AuthService {
    *
    */
   constructor(
-    private usersService: UsersService,
+    private usersService: UsersTcpService,
     private jwtService: JwtService,
   ) {}
 

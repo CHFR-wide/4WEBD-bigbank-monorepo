@@ -1,8 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { BankAccountsService } from './bank-accounts.service';
-import { UsersService } from './users.service';
 
 type TTransfer = {
   fromAccountId: number;
@@ -11,26 +9,17 @@ type TTransfer = {
 }
 
 @Injectable()
-export class TransfersService {
+export class TransfersTcpService {
   /**
    *
    */
   constructor(
-    @Inject(BankAccountsService) private bankAccountsService: BankAccountsService,
-    @Inject(UsersService) private usersService: UsersService,
-    @Inject('TRANSFER_SERVICE') private transferClient: ClientProxy,
+    @Inject('TCP_MS_TRANSFER') private transferClient: ClientProxy,
   ) {}
 
   async findAllForUser(userId: number) {
     return await firstValueFrom(
       this.transferClient.send({ cmd: 'transfer-findAllForUser' }, { userId }),
-    );
-  }
-
-  async canWithdraw(transferDto: TTransfer) {
-    return await this.bankAccountsService.canWithdraw(
-      transferDto.fromAccountId,
-      transferDto.amount,
     );
   }
 
@@ -40,13 +29,6 @@ export class TransfersService {
         { cmd: 'transfer-create' },
         { transfer: transferDto },
       ),
-    );
-  }
-
-  async senderOwnsAccount(transfer: TTransfer, userId: number) {
-    return await this.bankAccountsService.userOwnsAccount(
-      transfer.fromAccountId,
-      userId,
     );
   }
 

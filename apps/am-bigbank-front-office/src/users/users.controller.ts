@@ -1,4 +1,4 @@
-import { UsersService } from '@ambigbank/services';
+import { UsersTcpService } from '@ambigbank/services';
 import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TUserJwt, UserJwt } from 'src/decorators/req-user.decorator';
@@ -11,7 +11,7 @@ export class UsersController {
   /**
    *
    */
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersTcpService) {}
 
   @Get('me')
   async findCurrentUser(@UserJwt() userJwt: TUserJwt) {

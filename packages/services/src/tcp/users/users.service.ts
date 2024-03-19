@@ -11,8 +11,8 @@ type TUser = {
 }
 
 @Injectable()
-export class UsersService {
-  constructor(@Inject('USERS_SERVICE') private usersClient: ClientProxy) {}
+export class UsersTcpService {
+  constructor(@Inject('TCP_MS_USER') private usersClient: ClientProxy) {}
 
   async create(user: TUser) {
     return await firstValueFrom(

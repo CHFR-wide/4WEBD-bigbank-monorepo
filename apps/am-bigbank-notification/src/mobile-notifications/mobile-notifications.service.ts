@@ -1,4 +1,4 @@
-import { UsersService } from '@ambigbank/services';
+import { UsersTcpService } from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
 import { SendMobileNotificationDto } from './dto/send-mobile-notification.dto';
 
@@ -7,7 +7,7 @@ export class MobileNotificationsService {
   /**
    *
    */
-  constructor(private usersService: UsersService) {}
+  constructor(private usersService: UsersTcpService) {}
 
   async sendNotification(data: SendMobileNotificationDto) {
     const user = await this.usersService.findOne(data.userId);

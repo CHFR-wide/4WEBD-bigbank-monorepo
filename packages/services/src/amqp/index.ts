@@ -1,4 +1,4 @@
-export * from './bank-accounts.amqp.service';
-export * from './notifications.service';
-export * from './transfers.amqp.service';
+export * from './bank-accounts';
+export * from './notifications';
+export * from './transfers';
 
