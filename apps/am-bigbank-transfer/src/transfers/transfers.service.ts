@@ -1,5 +1,6 @@
 import { BankAccountsService, NotificationsService } from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
+import { Prisma } from 'prisma-client';
 import { PrismaService } from 'src/db-access/prisma.service';
 import { TransferDto } from './dto/transfer.dto';
 
@@ -22,6 +23,13 @@ export class TransfersService {
     await this.notifyTransferActors(transfer);
 
     return res;
+  }
+
+  async update(id: number, update: Prisma.TransferUpdateInput) {
+    return await this.prismaService.transfer.update({
+      where: { id },
+      data: update,
+    });
   }
 
   async notifyTransferActors(transfer: TransferDto) {

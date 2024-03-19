@@ -1,20 +1,35 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
-const msOptions = {
-  host: process.env.MS_TRANSFER_HOST,
-  port: +process.env.MS_TRANSFER_PORT,
-};
-
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.TCP,
-      options: msOptions,
+  const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService);
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.TCP,
+    options: {
+      host: configService.getOrThrow('MS_TRANSFER_HOST'),
+      port: +configService.getOrThrow('MS_TRANSFER_PORT'),
     },
-  );
-  await app.listen();
+  });
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      noAck: false,
+      urls: [
+        `amqp://${configService.get('RMQ_HOST', 'localhost')}:${configService.get('RMQ_PORT', '5672')}`,
+      ],
+      queue: 'transfer-queue',
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+
+  await app.startAllMicroservices();
 }
 bootstrap();

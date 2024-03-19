@@ -49,4 +49,22 @@ export class TransfersService {
       userId,
     );
   }
+
+  async validateTransfer(id: number) {
+    return await firstValueFrom(
+      this.transferClient.send(
+        { cmd: 'transfer-status-done' },
+        { id },
+      ),
+    );
+  }
+
+  async errorTransfer(id: number) {
+    return await firstValueFrom(
+      this.transferClient.send(
+        { cmd: 'transfer-status-error' },
+        { id },
+      ),
+    );
+  }
 }
