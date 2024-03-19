@@ -19,7 +19,6 @@ async function bootstrap() {
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      noAck: false,
       urls: [
         `amqp://${configService.get('RMQ_HOST', 'localhost')}:${configService.get('RMQ_PORT', '5672')}`,
       ],

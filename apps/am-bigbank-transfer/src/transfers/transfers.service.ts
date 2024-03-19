@@ -1,4 +1,8 @@
-import { BankAccountsService, NotificationsService } from '@ambigbank/services';
+import {
+  BankAccountsAmqpService,
+  BankAccountsService,
+  NotificationsService,
+} from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from 'prisma-client';
 import { PrismaService } from 'src/db-access/prisma.service';
@@ -13,6 +17,7 @@ export class TransfersService {
     private prismaService: PrismaService,
     private readonly notificationsService: NotificationsService,
     private readonly bankAccountsService: BankAccountsService,
+    private readonly bankAccountsAmqpService: BankAccountsAmqpService,
   ) {}
 
   async create(transfer: TransferDto) {
@@ -20,7 +25,13 @@ export class TransfersService {
       data: transfer,
     });
 
-    await this.notifyTransferActors(transfer);
+    this.notifyTransferActors(transfer);
+    this.bankAccountsAmqpService.transferMoney(
+      res.id,
+      transfer.fromAccountId,
+      transfer.toAccountId,
+      transfer.amount,
+    );
 
     return res;
   }

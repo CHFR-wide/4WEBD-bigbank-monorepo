@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { BankAccount } from 'prisma-client';
 import { BankAccountsService } from './bank-accounts.service';
 
@@ -52,5 +52,20 @@ export class BankAccountsController {
     userId: number;
   }): Promise<boolean> {
     return await this.bankAccountsService.userOwnsAccount(data.id, data.userId);
+  }
+
+  @EventPattern({ cmd: 'bankAccount-transferMoney' })
+  async transferMoney(data: {
+    transferId: number;
+    fromAccountId: number;
+    toAccountId: number;
+    amount: number;
+  }) {
+    await this.bankAccountsService.transferMoney(
+      data.transferId,
+      data.fromAccountId,
+      data.toAccountId,
+      data.amount,
+    );
   }
 }

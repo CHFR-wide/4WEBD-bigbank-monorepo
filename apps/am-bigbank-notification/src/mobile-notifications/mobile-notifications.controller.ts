@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 import { SendMobileNotificationDto } from './dto/send-mobile-notification.dto';
 import { MobileNotificationsService } from './mobile-notifications.service';
 
@@ -9,10 +9,8 @@ export class MobileNotificationsController {
     private readonly mobileNotificationsService: MobileNotificationsService,
   ) {}
 
-  @MessagePattern({ cmd: 'notify-mobile' })
-  async sendNotification(data: SendMobileNotificationDto): Promise<boolean> {
+  @EventPattern({ cmd: 'notify-mobile' })
+  async sendNotification(data: SendMobileNotificationDto) {
     this.mobileNotificationsService.sendNotification(data);
-
-    return true;
   }
 }

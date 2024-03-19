@@ -8,11 +8,10 @@ export class NotificationsService {
 
   async notifyMobile(userId: number, content: string) {
     return await firstValueFrom(
-      this.notificationsClient.send<boolean>(
+      this.notificationsClient.emit(
         { cmd: 'notify-mobile' },
         { userId, content},
       ),
     )
   }
-
 }

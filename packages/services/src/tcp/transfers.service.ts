@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { BankAccountsService } from '../bank-accounts/bank-accounts.service';
-import { UsersService } from '../users/users.service';
+import { BankAccountsService } from './bank-accounts.service';
+import { UsersService } from './users.service';
 
 type TTransfer = {
   fromAccountId: number;

@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
 import { ETransferStatus } from 'prisma-client';
 import { TransferDto } from './dto/transfer.dto';
 import { TransfersService } from './transfers.service';
@@ -18,14 +18,14 @@ export class TransfersController {
     return await this.transfersService.create(data.transfer);
   }
 
-  @MessagePattern({ cmd: 'transfer-status-done' })
+  @EventPattern({ cmd: 'transfer-status-done' })
   async validateTransfer(data: { id: number }) {
     return await this.transfersService.update(data.id, {
       status: ETransferStatus.DONE,
     });
   }
 
-  @MessagePattern({ cmd: 'transfer-status-error' })
+  @EventPattern({ cmd: 'transfer-status-error' })
   async errorTransfer(data: { id: number }) {
     return await this.transfersService.update(data.id, {
       status: ETransferStatus.ERROR,

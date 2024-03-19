@@ -1,4 +1,8 @@
-import { BankAccountsService, NotificationsService } from '@ambigbank/services';
+import {
+  BankAccountsAmqpService,
+  BankAccountsService,
+  NotificationsService,
+} from '@ambigbank/services';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
@@ -26,6 +30,23 @@ import { TransfersService } from './transfers.service';
         inject: [ConfigService],
       },
       {
+        name: 'RMQ_MS_BANK_ACCOUNT',
+        imports: [ConfigModule],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.RMQ,
+          options: {
+            urls: [
+              `amqp://${configService.get('RMQ_HOST')}:${configService.get('RMQ_PORT')}`,
+            ],
+            queue: 'bank-account-queue',
+            queueOptions: {
+              durable: false,
+            },
+          },
+        }),
+        inject: [ConfigService],
+      },
+      {
         name: 'BANKS_SERVICE',
         imports: [ConfigModule],
         useFactory: (configService: ConfigService) => ({
@@ -40,6 +61,11 @@ import { TransfersService } from './transfers.service';
     ]),
   ],
   controllers: [TransfersController],
-  providers: [TransfersService, BankAccountsService, NotificationsService],
+  providers: [
+    TransfersService,
+    BankAccountsService,
+    NotificationsService,
+    BankAccountsAmqpService,
+  ],
 })
 export class TransfersModule {}

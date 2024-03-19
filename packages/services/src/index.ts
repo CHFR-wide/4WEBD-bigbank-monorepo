@@ -1,5 +1,3 @@
-export * from './bank-accounts';
-export * from './notifications';
-export * from './transfers';
-export * from './users';
+export * from './amqp';
+export * from './tcp';
 

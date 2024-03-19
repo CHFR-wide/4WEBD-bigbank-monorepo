@@ -1,3 +1,4 @@
+import { TransfersAmqpService } from '@ambigbank/services';
 import { Injectable } from '@nestjs/common';
 import { BankAccount } from 'prisma-client';
 import { PrismaService } from 'src/db-access/prisma.service';
@@ -7,7 +8,10 @@ export class BankAccountsService {
   /**
    *
    */
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private transfersAmqpService: TransfersAmqpService,
+  ) {}
 
   async create(label: string, userId: number): Promise<BankAccount> {
     return await this.prismaService.bankAccount.create({
@@ -66,5 +70,31 @@ export class BankAccountsService {
     });
 
     return bankAccount && bankAccount.userId === userId;
+  }
+
+  async transferMoney(
+    transferId: number,
+    fromAccountId: number,
+    toAccountId: number,
+    amount: number,
+  ) {
+    try {
+      await this.canWithdraw(fromAccountId, amount);
+
+      await this.prismaService.$transaction([
+        this.prismaService.bankAccount.update({
+          where: { id: fromAccountId },
+          data: { balance: { decrement: amount } },
+        }),
+        this.prismaService.bankAccount.update({
+          where: { id: toAccountId },
+          data: { balance: { increment: amount } },
+        }),
+      ]);
+
+      this.transfersAmqpService.setTransferDone(transferId);
+    } catch (error) {
+      this.transfersAmqpService.setTransferError(transferId);
+    }
   }
 }
