@@ -79,7 +79,7 @@ export class BankAccountsService {
   }
 
   async transferMoney(
-    senderId: number,
+    userId: number,
     transferId: number,
     fromAccountId: number,
     toAccountId: number,
@@ -104,7 +104,7 @@ export class BankAccountsService {
       );
       return;
     }
-    if (!(await this.userOwnsAccount(fromAccountId, senderId))) {
+    if (!(await this.userOwnsAccount(fromAccountId, userId))) {
       this.transfersAmqpService.ackTransfer(
         transferId,
         ETransferStatus.ERROR,
